@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
+	"github.com/lyfoore/weather-app/configs"
 	"github.com/lyfoore/weather-app/internal/router"
 )
 
@@ -38,5 +42,13 @@ func main() {
 	// fmt.Println("got api")
 	// fmt.Println(apiKey)
 
-	router.StartRouter()
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	config := &configs.Config{
+		APIkey: os.Getenv("OWM_API_key"),
+	}
+
+	router.StartRouter(config)
 }

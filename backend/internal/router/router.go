@@ -1,12 +1,11 @@
 package router
 
 import (
-	"log"
 	"net/http"
-	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"github.com/lyfoore/weather-app/configs"
 )
 
 const (
@@ -15,14 +14,8 @@ const (
 
 type Router struct{}
 
-func StartRouter() {
+func StartRouter(cfg *configs.Config) {
 	r := gin.Default()
-
-	if err := godotenv.Load("../configs/.env"); err != nil {
-		log.Fatal(err)
-	}
-
-	apiKey := os.Getenv("OWM_API_key")
 
 	r.GET("/:cityName", func(ctx *gin.Context) {
 		// apiKey :=
@@ -31,7 +24,7 @@ func StartRouter() {
 
 		ctx.JSON(http.StatusOK, gin.H{
 			ctx.Param("cityName"): "OK",
-			"apiKey":              apiKey,
+			"apiKey":              cfg.APIkey,
 		})
 	})
 
@@ -44,6 +37,13 @@ func StartRouter() {
 	r.GET("/test/:id", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			ctx.Param("id"): "OK",
+		})
+	})
+
+	r.GET("/api/time", func(ctx *gin.Context) {
+		currentTime := time.Now().Format(time.RFC3339)
+		ctx.JSON(http.StatusOK, gin.H{
+			"time": currentTime,
 		})
 	})
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

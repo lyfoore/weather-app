@@ -2,9 +2,9 @@ FROM golang:alpine
 
 WORKDIR /app
 
-COPY . .
+COPY ./backend .
 
-RUN GOOS=linux go mod download
+RUN go mod download
 RUN GOOS=linux go build -o main cmd/main.go
 
 # EXPOSE 8080
