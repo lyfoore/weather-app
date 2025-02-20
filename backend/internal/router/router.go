@@ -1,11 +1,13 @@
 package router
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lyfoore/weather-app/configs"
+	"github.com/lyfoore/weather-app/internal/owm"
 )
 
 const (
@@ -42,5 +44,14 @@ func StartRouter(cfg *configs.Config) {
 			"time": currentTime,
 		})
 	})
+
+	r.GET("api/getResponse/:cityName", func(ctx *gin.Context) {
+		resp, err := owm.GetResponse(ctx.Param("cityName"), &cfg.APIkey)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ctx.JSON(http.StatusOK, resp)
+	})
+
 	r.Run()
 }
