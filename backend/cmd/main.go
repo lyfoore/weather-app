@@ -32,16 +32,6 @@ func startServer(url string) {
 }
 
 func main() {
-	// // startServer(":8080")
-	// err := godotenv.Load("../configs/.env")
-	// if err != nil {
-	// 	fmt.Printf("Error while loading .env: %s", err)
-	// }
-
-	// apiKey := os.Getenv("OWM_API_key")
-	// fmt.Println("got api")
-	// fmt.Println(apiKey)
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}

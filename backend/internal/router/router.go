@@ -18,10 +18,6 @@ func StartRouter(cfg *configs.Config) {
 	r := gin.Default()
 
 	r.GET("/:cityName", func(ctx *gin.Context) {
-		// apiKey :=
-		// url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric", weatherURL, ctx.Param("cityName"), apiKey)
-		// http.Get(url)
-
 		ctx.JSON(http.StatusOK, gin.H{
 			ctx.Param("cityName"): "OK",
 			"apiKey":              cfg.APIkey,
@@ -46,5 +42,5 @@ func StartRouter(cfg *configs.Config) {
 			"time": currentTime,
 		})
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run()
 }
