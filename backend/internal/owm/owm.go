@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 const (
@@ -14,7 +15,7 @@ type owmResponse struct {
 	Main struct {
 		Temp float32 `json:"temp"`
 	} `json:"main"`
-	Timezone int32  `json:"timezone"`
+	Timezone int64  `json:"timezone"`
 	Name     string `json:"name"`
 	Weather  []struct {
 		Description string `json:"description"`
@@ -23,14 +24,14 @@ type owmResponse struct {
 }
 
 type Response struct {
-	Temp        float32 `json:"temp"`
-	Time        string  `json:"timezone"`
+	Temperature float32 `json:"temperature"`
+	Time        string  `json:"time"`
 	Description string  `json:"description"`
 	Name        string  `json:"name"`
 	Icon        string  `json:"icon"`
 }
 
-func GetResponse(cityName string, APIkey *string) (*owmResponse, error) {
+func GetResponse(cityName string, APIkey *string) (*Response, error) {
 	url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric", weatherURL, cityName, *APIkey)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -44,5 +45,21 @@ func GetResponse(cityName string, APIkey *string) (*owmResponse, error) {
 		return nil, fmt.Errorf("JSON decode error: %w", err)
 	}
 
-	return owmResp, nil
+	response := &Response{}
+	owmResp.convertToResponse(response)
+
+	return response, nil
+}
+
+func (owmResp owmResponse) convertToResponse(resp *Response) {
+	resp.Temperature = owmResp.Main.Temp
+	resp.Description = owmResp.Weather[0].Description
+	resp.Name = owmResp.Name
+	resp.Icon = owmResp.Weather[0].Icon
+	resp.Time = getCityTime(owmResp.Timezone)
+}
+
+func getCityTime(timeshift int64) string {
+	currTime := time.Now().UTC().Add(time.Duration(timeshift) * time.Second)
+	return currTime.Format(time.TimeOnly)
 }
