@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
   const [city, setCity] = useState('');
   const [weatherData, setWeatherData] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -15,7 +16,7 @@ function App() {
     setError(null);
     
     try {
-      const response = await fetch(`/api/getResponse/${encodeURIComponent(city)}`);
+      const response = await fetch(`/api/getWeather/${encodeURIComponent(city)}`);
       if (!response.ok) {
         throw new Error('Город не найден');
       }
@@ -27,6 +28,23 @@ function App() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const timerId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timerId)
+  }, [])
+
+  // const getAdjustedTime = () => {
+  //   if (!weatherData) return '--:--:--';
+
+  //   const baseTime = currentTime.getTime();
+  //   const adjustedTime = new Date(baseTime + weatherData.timezone * 1000)
+
+  //   return adjustedTime.toISOString().substring(11, 19)
+  // }
 
   return (
     <div className="app">
@@ -55,7 +73,11 @@ function App() {
               alt="Weather icon"
             />
             <p>Температура: {weatherData.temperature}°C</p>
-            <p>Время: {weatherData.time}</p>
+            <p>Время: {weatherData ? 
+              new Date(currentTime.getTime() + weatherData.timezone * 1000)
+                .toISOString().substring(11, 19) 
+              : '--:--:--'}
+            </p>
             <p>Описание: {weatherData.description}</p>
           </div>
         </div>
