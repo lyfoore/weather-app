@@ -1,44 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-
-	"github.com/joho/godotenv"
-	"github.com/lyfoore/weather-app/configs"
-	"github.com/lyfoore/weather-app/internal/router"
+	"github.com/lyfoore/weather-app/config"
+	"github.com/lyfoore/weather-app/internal/client"
+	"github.com/lyfoore/weather-app/internal/service"
+	transport "github.com/lyfoore/weather-app/internal/transport/http"
 )
 
-type Handler struct {
-	Message string
-}
-
-func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, h.Message)
-}
-
-func startServer(url string) {
-	fmt.Print("Server is starting...\n")
-	mux := http.NewServeMux()
-	h := &Handler{"Hello from server!"}
-	mux.Handle("/", h)
-	mux.HandleFunc("/test",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("You are in the /test"))
-		})
-	http.ListenAndServe(url, mux)
-}
-
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
+	config := config.NewConfig()
 
-	config := &configs.Config{
-		APIkey: os.Getenv("OWM_API_key"),
-	}
+	client := client.NewWeatherClient(config)
+	service := service.NewWeatherService(client)
+	router := transport.SetupRouter(service)
 
-	router.StartRouter(config)
+	router.Run()
 }
