@@ -25,7 +25,7 @@ func NewWeatherClient(c *config.Config) *ExternalWeatherClient {
 }
 
 func (client *ExternalWeatherClient) GetExternalResponse(cityName string) (*domain.ExternalAPIResponse, error) {
-	url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric", weatherURL, cityName, client.cfg.APIkey)
+	url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric&lang=ru", weatherURL, cityName, client.cfg.APIkey)
 
 	resp, err := http.Get(url)
 	if err != nil {
