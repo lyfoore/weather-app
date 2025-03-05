@@ -12,6 +12,9 @@ export default function CityPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+        setWeatherData(null);
         const response = await fetch(`/api/getWeather/${encodeURIComponent(cityName)}`);
         if (!response.ok) throw new Error('Город не найден');
         const data = await response.json();
@@ -30,7 +33,7 @@ export default function CityPage() {
     <div className="app">
       <h1>weather.time</h1>
       <WeatherForm />
-      {loading ? <p>Загрузка...</p> : <WeatherDisplay weatherData={weatherData} error={error} />}
+      {loading ? <p className="loading">Загрузка...</p> : <WeatherDisplay weatherData={weatherData} error={error} />}
     </div>
   );
 }
