@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 
 	"github.com/lyfoore/weather-app/config"
 	"github.com/lyfoore/weather-app/internal/domain"
@@ -25,23 +26,24 @@ func NewWeatherClient(c *config.Config) *ExternalWeatherClient {
 }
 
 func (client *ExternalWeatherClient) GetExternalResponse(cityName string) (*domain.ExternalAPIResponse, error) {
-	url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric&lang=ru", weatherURL, cityName, client.cfg.APIkey)
+	url := fmt.Sprintf("%s?q=%s&appid=%s&units=metric&lang=ru", weatherURL, url.QueryEscape(cityName), client.cfg.APIkey)
 
 	resp, err := http.Get(url)
 	if err != nil {
-		log.Fatalln(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 
-	fmt.Println("RESPONSE:", cityName)
+	log.Println("RESPONSE:", cityName)
+	log.Println("URL:", url)
 
 	var data domain.ExternalAPIResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
-		log.Fatalln("Error while decoding externalAPIResponse", err)
+		log.Println("Error while decoding externalAPIResponse", err)
 		return nil, err
 	}
 

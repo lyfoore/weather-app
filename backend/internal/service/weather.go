@@ -20,7 +20,7 @@ func NewWeatherService(c *client.ExternalWeatherClient) *WeatherService {
 func (s WeatherService) ProcessWeatherResponse(cityName string) (*domain.WeatherResponse, error) {
 	externalResponse, err := s.client.GetExternalResponse(cityName)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
