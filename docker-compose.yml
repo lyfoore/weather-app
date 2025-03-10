@@ -2,7 +2,7 @@ services:
   backend:
     build: 
       context: ./backend
-      dockerfile: /build/package/Dockerfile
+      dockerfile: ./build/package/Dockerfile
     ports:
       - "8080:8080"
   
@@ -20,6 +20,6 @@ services:
     image: certbot/certbot
     volumes:
       - ./frontend/certbot:/etc/letsencrypt
-    command: certonly --standalone -d intern-2.it-all-stars.com --email maxim_zheribor@dotwrk.com --agree-tos --non-interactive
+    command: certonly --standalone -d intern-3.it-all-stars.com --email maxim_zheribor@dotwrk.com --agree-tos --non-interactive
     depends_on:
       - frontend
