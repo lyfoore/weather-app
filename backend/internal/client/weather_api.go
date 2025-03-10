@@ -36,9 +36,6 @@ func (client *ExternalWeatherClient) GetExternalResponse(cityName string) (*doma
 
 	defer resp.Body.Close()
 
-	log.Println("RESPONSE:", cityName)
-	log.Println("URL:", url)
-
 	var data domain.ExternalAPIResponse
 
 	err = json.NewDecoder(resp.Body).Decode(&data)
