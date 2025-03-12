@@ -3,8 +3,17 @@ services:
     build: 
       context: ./backend
       dockerfile: ./build/package/Dockerfile
-    ports:
-      - "8080:8080"
+    networks:
+      - app-network
+
+    varnish:
+      image: varnish:7.4
+      volumes:
+        - ./varnish/default.vcl:/etc/varnish/default.vcl
+      networks:
+      - app-network
+      depends_on:
+        backend
   
   frontend:
     build: ./frontend
@@ -13,8 +22,10 @@ services:
       - "443:443"
     volumes:
       - ./frontend/certbot:/etc/letsencrypt
+    networks:
+      - app-network
     depends_on:
-      - backend
+      - varnish
 
   certbot:
     image: certbot/certbot
@@ -23,3 +34,7 @@ services:
     command: certonly --standalone -d intern-3.it-all-stars.com --email maxim_zheribor@dotwrk.com --agree-tos --non-interactive
     depends_on:
       - frontend
+
+networks:
+  app-network:
+    driver: bridge
