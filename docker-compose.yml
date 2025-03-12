@@ -6,14 +6,14 @@ services:
     networks:
       - app-network
 
-    varnish:
-      image: varnish:7.4
-      volumes:
-        - ./varnish/default.vcl:/etc/varnish/default.vcl
-      networks:
-      - app-network
-      depends_on:
-        backend
+  varnish:
+    image: varnish:7.4
+    volumes:
+      - ./varnish/default.vcl:/etc/varnish/default.vcl
+    networks:
+    - app-network
+    depends_on:
+      backend
   
   frontend:
     build: ./frontend
