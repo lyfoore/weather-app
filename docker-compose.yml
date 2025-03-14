@@ -27,7 +27,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - varnish
+      - backend
 
   certbot:
     image: certbot/certbot
