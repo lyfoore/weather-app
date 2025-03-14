@@ -8,6 +8,8 @@ services:
 
   varnish:
     image: varnish:7.4
+    ports:
+      - "80:80"
     volumes:
       - ./varnish/default.vcl:/etc/varnish/default.vcl
     networks:
@@ -18,7 +20,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "80:80"
+      - "8081:80"
       - "443:443"
     volumes:
       - ./frontend/certbot:/etc/letsencrypt
